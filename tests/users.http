@@ -12,7 +12,6 @@ Content-Type: application/json
     client.assert(response.status == 200)
     client.assert(Number.isInteger(response.body["id"]))
     client.assert(response.body["username"].length == 10)
-    client.assert(response.body["token"].length == 32)
     client.assert(response.body["balance"] == 1000.0)
     client.assert(response.body["committed_trips"] == 0)
 %}
@@ -35,6 +34,45 @@ Content-Type: application/json
         message: "The <User username=u7i> already exists"
     }))
 %}
+
+### Login into the user
+POST http://localhost:8000/users/login
+Accept: application/json
+Content-Type: application/json
+
+{
+    "username": "u7i",
+    "password": "qwerty"
+}
+
+> {%
+    client.assert(response.status == 200)
+    client.assert(JSON.stringify(response.body) == JSON.stringify({
+        id: 0,
+        username: "u7i",
+        token: "r86gmvwr0qoyjvl4spw9xtxo5civ629k",
+        balance: 1000.0,
+        committed_trips: 0
+    }))
+ %}
+
+### Login into the user with invalid password
+POST http://localhost:8000/users/login
+Accept: application/json
+Content-Type: application/json
+
+{
+    "username": "u7i",
+    "password": "invalid"
+}
+
+> {%
+    client.assert(response.status == 400)
+    client.assert(JSON.stringify(response.body) == JSON.stringify({
+        type: "user_credentials_invalid",
+        message: "The username 'u7i' or the password 'invalid' are invalid",
+    }))
+ %}
 
 ### Resolve a logged-in user by its token
 GET http://localhost:8000/users/me

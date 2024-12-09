@@ -4,7 +4,7 @@ GET http://localhost:8000/not-found
 > {%
     client.assert(response.status == 404)
     client.assert(JSON.stringify(response.body) == JSON.stringify({
-        type: "not-found",
+        type: "not_found",
         message: "The page 'http://localhost:8000/not-found' was not found on this server"
     }))
 %}
@@ -30,7 +30,7 @@ Content-Type: application/json
 > {%
     client.assert(response.status == 405)
     client.assert(JSON.stringify(response.body) == JSON.stringify({
-        type: "method-not-allowed",
+        type: "method_not_allowed",
         message: "The method 'POST' is not allowed for 'http://localhost:8000/users/me'"
     }))
 %}
@@ -44,7 +44,7 @@ Content-Type: application/json
 > {%
     client.assert(response.status == 422)
     client.assert(JSON.stringify(response.body) == JSON.stringify({
-        type: "bad-request",
+        type: "bad_request",
         message: [
             {
                 type: "Field required",
@@ -66,7 +66,7 @@ GET http://localhost:8000/users/me
 > {%
     client.assert(response.status == 422)
     client.assert(JSON.stringify(response.body) == JSON.stringify({
-        type: "bad-request",
+        type: "bad_request",
         message: [
             {
                 type: "Field required",

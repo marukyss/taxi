@@ -12,6 +12,7 @@ def handle_service_error(_: Request, exc: ServiceError) -> JSONResponse:
     statuses = {
         'user_already_exists': status.HTTP_400_BAD_REQUEST,
         'user_not_found': status.HTTP_404_NOT_FOUND,
+        'user_credentials_invalid': status.HTTP_400_BAD_REQUEST,
         'route_not_found': status.HTTP_404_NOT_FOUND,
         'car_not_found': status.HTTP_404_NOT_FOUND,
         'trip_not_found': status.HTTP_404_NOT_FOUND
@@ -33,8 +34,8 @@ def handle_http_exception(_: Request, exc: HTTPException):
     # Compare http statuses to their text representations
     types = {
         status.HTTP_401_UNAUTHORIZED: "unauthorized",
-        status.HTTP_404_NOT_FOUND: "not-found",
-        status.HTTP_405_METHOD_NOT_ALLOWED: "method-not-allowed"
+        status.HTTP_404_NOT_FOUND: "not_found",
+        status.HTTP_405_METHOD_NOT_ALLOWED: "method_not_allowed"
     }
 
     type = types.get(exc.status_code, "unknown")
@@ -64,7 +65,7 @@ def handle_validation_error(_: Request, exc: RequestValidationError):
     return JSONResponse(
         status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
         content={
-            "type": "bad-request",
+            "type": "bad_request",
             "message": entries
         }
     )

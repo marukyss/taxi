@@ -31,7 +31,7 @@ GET http://localhost:8000/users/me
 > {%
     client.assert(response.status == 422)
     client.assert(JSON.stringify(response.body) == JSON.stringify({
-        type: "bad-request",
+        type: "bad_request",
         message: [
             {
                 type: "Field required",

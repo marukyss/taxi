@@ -1,20 +1,17 @@
 class ServiceError(Exception):
     """Base class for all the errors emitted by business-logic.
 
-    Class Attributes
+    Static Attributes
     ----------------
     type : str
         The machine-readable category of this error.
-
-    Methods
-    -------
-    constructor(message: str)
-         Creates a new exception and sets a context-based description of an error
     """
 
     type: str = None
 
     def __init__(self, message: str):
+        """Creates a new exception and sets a context-based description of an error"""
+
         self.message: str = message
 
     def __str__(self) -> str:
@@ -27,6 +24,10 @@ class UserAlreadyExistsError(ServiceError):
 
 class UserNotFoundError(ServiceError):
     type: str = "user_not_found"
+
+
+class UserCredentialsInvalidError(ServiceError):
+    type: str = "user_credentials_invalid"
 
 
 class RouteNotFoundError(ServiceError):
