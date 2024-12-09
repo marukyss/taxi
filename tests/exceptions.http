@@ -1,0 +1,96 @@
+### Test not-found exception
+GET http://localhost:8000/not-found
+
+> {%
+    client.assert(response.status == 404)
+    client.assert(JSON.stringify(response.body) == JSON.stringify({
+        type: "not-found",
+        message: "The page 'http://localhost:8000/not-found' was not found on this server"
+    }))
+%}
+
+### Test unauthorized exception
+GET http://localhost:8000/users/me
+Authentication: empty
+
+> {%
+    client.assert(response.status == 401)
+    client.assert(JSON.stringify(response.body) == JSON.stringify({
+        type: "unauthorized",
+        message: "The token 'empty' is not owned by any user"
+    }))
+%}
+
+### Test unexisting method
+POST http://localhost:8000/users/me
+Content-Type: application/json
+
+{}
+
+> {%
+    client.assert(response.status == 405)
+    client.assert(JSON.stringify(response.body) == JSON.stringify({
+        type: "method-not-allowed",
+        message: "The method 'POST' is not allowed for 'http://localhost:8000/users/me'"
+    }))
+%}
+
+### Test bad request body
+POST http://localhost:8000/users
+Content-Type: application/json
+
+{}
+
+> {%
+    client.assert(response.status == 422)
+    client.assert(JSON.stringify(response.body) == JSON.stringify({
+        type: "bad-request",
+        message: [
+            {
+                type: "Field required",
+                field: "body/username",
+                input: {}
+            },
+            {
+                type: "Field required",
+                field: "body/password",
+                input: {}
+            }
+        ]
+    }))
+%}
+
+### Test bad request headers
+GET http://localhost:8000/users/me
+
+> {%
+    client.assert(response.status == 422)
+    client.assert(JSON.stringify(response.body) == JSON.stringify({
+        type: "bad-request",
+        message: [
+            {
+                type: "Field required",
+                field: "header/authentication",
+                input: null
+            }
+        ]
+    }))
+%}
+
+### Test service-error capturing
+POST http://localhost:8000/users
+Accept: application/json
+Content-Type: application/json
+
+{
+    "username": "u7i",
+    "password": "qwerty2"
+}
+
+> {%
+    client.assert(response.status == 400)
+    client.assert(JSON.stringify(response.body) == JSON.stringify({
+        type: "user_already_exists",
+        message: "The <User username=u7i> already exists"
+    }))
+%}

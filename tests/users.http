@@ -1,0 +1,52 @@
+### Create a new user
+POST http://localhost:8000/users
+Accept: application/json
+Content-Type: application/json
+
+{
+    "username": "{{$random.alphanumeric(10)}}",
+    "password": "qwerty"
+}
+
+> {%
+    client.assert(response.status == 200)
+    client.assert(Number.isInteger(response.body["id"]))
+    client.assert(response.body["username"].length == 10)
+    client.assert(response.body["token"].length == 32)
+    client.assert(response.body["balance"] == 1000.0)
+    client.assert(response.body["committed_trips"] == 0)
+%}
+
+
+### Try to create already existing user
+POST http://localhost:8000/users
+Accept: application/json
+Content-Type: application/json
+
+{
+    "username": "u7i",
+    "password": "qwerty2"
+}
+
+> {%
+    client.assert(response.status == 400)
+    client.assert(JSON.stringify(response.body) == JSON.stringify({
+        type: "user_already_exists",
+        message: "The <User username=u7i> already exists"
+    }))
+%}
+
+### Resolve a logged-in user by its token
+GET http://localhost:8000/users/me
+Authentication: r86gmvwr0qoyjvl4spw9xtxo5civ629k
+
+> {%
+    client.assert(response.status == 200)
+    client.assert(JSON.stringify(response.body) == JSON.stringify({
+        id: 0,
+        username: "u7i",
+        token: "r86gmvwr0qoyjvl4spw9xtxo5civ629k",
+        balance: 1000.0,
+        committed_trips: 0
+    }))
+%}

@@ -1,0 +1,43 @@
+### Test valid token
+GET http://localhost:8000/users/me
+Authentication: r86gmvwr0qoyjvl4spw9xtxo5civ629k
+
+> {%
+    client.assert(response.status == 200)
+    client.assert(JSON.stringify(response.body) == JSON.stringify({
+        id: 0,
+        username: "u7i",
+        token: "r86gmvwr0qoyjvl4spw9xtxo5civ629k",
+        balance: 1000.0,
+        committed_trips: 0
+    }))
+%}
+
+### Test invalid token
+GET http://localhost:8000/users/me
+Authentication: empty
+
+> {%
+    client.assert(response.status == 401)
+    client.assert(JSON.stringify(response.body) == JSON.stringify({
+        type: "unauthorized",
+        message: "The token 'empty' is not owned by any user"
+    }))
+%}
+
+### Test request without authorization header
+GET http://localhost:8000/users/me
+
+> {%
+    client.assert(response.status == 422)
+    client.assert(JSON.stringify(response.body) == JSON.stringify({
+        type: "bad-request",
+        message: [
+            {
+                type: "Field required",
+                field: "header/authentication",
+                input: null
+            }
+        ]
+    }))
+%}
