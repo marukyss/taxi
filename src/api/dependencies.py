@@ -17,14 +17,14 @@ def unit_of_work() -> UnitOfWorkFactory:
 UnitOfWorkDependency = Annotated[UnitOfWorkFactory, Depends(unit_of_work)]
 
 
-async def current_user(authentication: Annotated[str, Header()], uow: UnitOfWorkDependency) -> UserSchema:
+async def current_user(authorization: Annotated[str, Header()], uow: UnitOfWorkDependency) -> UserSchema:
     # Find the current user by authentication token attached to the request
-    user = await UsersService.find_by_token(uow, authentication)
+    user = await UsersService.find_by_token(uow, authorization)
 
     if user is None:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail=f"The token '{authentication}' is not owned by any user"
+            detail=f"The token '{authorization}' is not owned by any user"
         )
 
     return user

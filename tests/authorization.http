@@ -1,6 +1,6 @@
 ### Test valid token
 GET http://localhost:8000/users/me
-Authentication: r86gmvwr0qoyjvl4spw9xtxo5civ629k
+Authorization: r86gmvwr0qoyjvl4spw9xtxo5civ629k
 
 > {%
     client.assert(response.status == 200)
@@ -15,7 +15,7 @@ Authentication: r86gmvwr0qoyjvl4spw9xtxo5civ629k
 
 ### Test invalid token
 GET http://localhost:8000/users/me
-Authentication: empty
+Authorization: empty
 
 > {%
     client.assert(response.status == 401)
@@ -35,7 +35,7 @@ GET http://localhost:8000/users/me
         message: [
             {
                 type: "Field required",
-                field: "header/authentication",
+                field: "header/authorization",
                 input: null
             }
         ]

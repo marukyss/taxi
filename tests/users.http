@@ -76,7 +76,7 @@ Content-Type: application/json
 
 ### Resolve a logged-in user by its token
 GET http://localhost:8000/users/me
-Authentication: r86gmvwr0qoyjvl4spw9xtxo5civ629k
+Authorization: r86gmvwr0qoyjvl4spw9xtxo5civ629k
 
 > {%
     client.assert(response.status == 200)

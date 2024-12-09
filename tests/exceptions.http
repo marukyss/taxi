@@ -11,7 +11,7 @@ GET http://localhost:8000/not-found
 
 ### Test unauthorized exception
 GET http://localhost:8000/users/me
-Authentication: empty
+Authorization: empty
 
 > {%
     client.assert(response.status == 401)
@@ -70,7 +70,7 @@ GET http://localhost:8000/users/me
         message: [
             {
                 type: "Field required",
-                field: "header/authentication",
+                field: "header/authorization",
                 input: null
             }
         ]
