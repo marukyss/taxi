@@ -39,23 +39,35 @@ class SqlEngine:
             fk_constrains = []
 
             # Discover the DB structure
-            for tbl in BaseSqlModel.metadata.tables.values():
+            present_tables = await conn.run_sync(
+                lambda sync_conn: inspect(sync_conn).get_table_names()
+            )
+
+            # Avoid dropping tables unrelated to the service models
+            valid_tables = filter(
+                lambda name: name in BaseSqlModel.metadata.tables,
+                present_tables
+            )
+
+            for tbl_name in valid_tables:
+                tbl = BaseSqlModel.metadata.tables[tbl_name]
+                tables.append(tbl)
+
+                # Extract the FK constrains for the processed table
                 fk_list = await conn.run_sync(
-                    lambda sync_conn: inspect(sync_conn).get_foreign_keys(tbl.name)
+                    lambda sync_conn: inspect(sync_conn).get_foreign_keys(tbl_name)
                 )
 
                 for fk in fk_list:
                     fk_constrains.append(ForeignKeyConstraint((), (), table=tbl, name=fk["name"]))
-
-                tables.append(tbl)
 
             # Drop all the FK constrains at fist
             for fk in fk_constrains:
                 await conn.execute(DropConstraint(fk))
 
             # Drop the tables freed from constrains
-            for tbl in tables:
-                await conn.execute(DropTable(tbl))
+            for tbl_name in tables:
+                await conn.execute(DropTable(tbl_name))
 
     def session_maker(self) -> async_sessionmaker:
         """Returns a session-maker for this DB engine."""
