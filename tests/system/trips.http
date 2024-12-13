@@ -1,0 +1,45 @@
+### Create a new trip
+POST http://localhost:8000/trips
+Accept: application/json
+Content-Type: application/json
+Authorization:
+
+{
+  "route_id": 1,
+  "car_id": 1
+}
+
+### Finish an existing trip
+POST http://localhost:8000/trips/1/finish
+Accept: application/json
+Content-Type: application/json
+
+{}
+
+### Finish an existing trip
+POST http://localhost:8000/trips/1/finish
+Accept: application/json
+Content-Type: application/json
+
+{}
+
+### Finish unexisting trip
+POST http://localhost:8000/trips/-1/finish
+Accept: application/json
+Content-Type: application/json
+
+{
+  "route_id": 1,
+  "car_id": 1
+}
+
+### Read an existing trip
+GET http://localhost:8000/trips/1
+Accept: application/json
+Content-Type: application/json
+
+### Read unexisting trip
+GET http://localhost:8000/trips/-1
+Accept: application/json
+Content-Type: application/json
+

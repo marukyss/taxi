@@ -14,7 +14,7 @@ async def create(request: UserSchemaCreate, uow: UnitOfWorkDependency) -> UserSc
 
 
 @router.post("/login")
-async def me(uow: UnitOfWorkDependency, credentials: UserSchemaLogin) -> UserSchema:
+async def login(uow: UnitOfWorkDependency, credentials: UserSchemaLogin) -> UserSchema:
     """Logins the user into the system, fails if the credentials are wrong"""
     return await UsersService.login(uow, credentials)
 

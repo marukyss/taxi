@@ -1,7 +1,8 @@
-### Find a car using the set of filters
+### Find cars using the set of filters
 POST http://localhost:8000/cars/find
 Accept: application/json
 Content-Type: application/json
+Authorization: r86gmvwr0qoyjvl4spw9xtxo5civ629k
 
 {
   "required_distance": 7.5,
@@ -39,4 +40,39 @@ Content-Type: application/json
             "supports_animals": false
         }
     ]))
+%}
+
+### Ensure that price filter works
+POST http://localhost:8000/cars/find
+Accept: application/json
+Content-Type: application/json
+Authorization: r86gmvwr0qoyjvl4spw9xtxo5civ629k
+
+{
+  "required_distance": 7.5,
+  "max_price": -100,
+  "smokeless": false,
+  "allows_children": true,
+  "allows_disabled": false,
+  "allows_luggage": true,
+  "allows_animals": false
+}
+
+> {%
+    client.assert(response.status == 200)
+    client.assert(JSON.stringify(response.body) == JSON.stringify([]))
+%}
+
+### Authorization filter
+POST http://localhost:8000/cars/find
+Accept: application/json
+Content-Type: application/json
+Authorization:
+
+> {%
+    client.assert(response.status == 401)
+    client.assert(JSON.stringify(response.body) == JSON.stringify({
+        "type": "unauthorized",
+        "message": "The token '' is not owned by any user"
+    }))
 %}

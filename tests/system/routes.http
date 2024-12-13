@@ -2,6 +2,7 @@
 POST http://localhost:8000/routes
 Accept: application/json
 Content-Type: application/json
+Authorization: r86gmvwr0qoyjvl4spw9xtxo5civ629k
 
 {
   "start_address": "Soborna 1",
@@ -23,6 +24,7 @@ Content-Type: application/json
 POST http://localhost:8000/routes/2/refresh
 Accept: application/json
 Content-Type: application/json
+Authorization: r86gmvwr0qoyjvl4spw9xtxo5civ629k
 
 {}
 
@@ -37,11 +39,25 @@ Content-Type: application/json
     }))
 %}
 
+### Validate the authentication for the route refreshing
+POST http://localhost:8000/routes/2/refresh
+Accept: application/json
+Content-Type: application/json
+Authorization:
+
+> {%
+    client.assert(response.status == 401)
+    client.assert(JSON.stringify(response.body) == JSON.stringify({
+        "type": "unauthorized",
+        "message": "The token '' is not owned by any user"
+    }))
+%}
 
 ### Refresh unexisting route
 POST http://localhost:8000/routes/-1/refresh
 Accept: application/json
 Content-Type: application/json
+Authorization: r86gmvwr0qoyjvl4spw9xtxo5civ629k
 
 {}
 
@@ -57,6 +73,7 @@ Content-Type: application/json
 GET http://localhost:8000/routes/2
 Accept: application/json
 Content-Type: application/json
+Authorization: r86gmvwr0qoyjvl4spw9xtxo5civ629k
 
 {}
 
@@ -75,6 +92,7 @@ Content-Type: application/json
 GET http://localhost:8000/routes/-1
 Accept: application/json
 Content-Type: application/json
+Authorization: r86gmvwr0qoyjvl4spw9xtxo5civ629k
 
 {}
 
@@ -83,5 +101,19 @@ Content-Type: application/json
     client.assert(JSON.stringify(response.body) == JSON.stringify({
         type: "route_not_found",
         message: "The <Route id=-1> was not found"
+    }))
+%}
+
+### Validate that routes are accessible only for authorized users
+GET http://localhost:8000/routes/2
+Accept: application/json
+Content-Type: application/json
+Authorization:
+
+> {%
+    client.assert(response.status == 401)
+    client.assert(JSON.stringify(response.body) == JSON.stringify({
+        "type": "unauthorized",
+        "message": "The token '' is not owned by any user"
     }))
 %}
