@@ -4,15 +4,39 @@ Accept: application/json
 Content-Type: application/json
 
 {
-  "start_address": "Soborna 1",
-  "end_address": "Soborna 10"
+  "required_distance": 7.5,
+  "max_price": 32,
+  "smokeless": false,
+  "allows_children": true,
+  "allows_disabled": false,
+  "allows_luggage": true,
+  "allows_animals": false
 }
 
 > {%
     client.assert(response.status == 200)
-    client.assert(Number.isInteger(response.body["id"]))
-    client.assert(response.body["start_address"] == "Soborna 1")
-    client.assert(response.body["end_address"] == "Soborna 10")
-    client.assert(response.body["distance_kilometers"] == 0.885)
-    client.assert(!Number.isNaN(parseFloat(response.body["mean_time_minutes"])))
+    client.assert(JSON.stringify(response.body) == JSON.stringify([
+        {
+            "id": 2,
+            "category": "business",
+            "price_per_kilometer": 2.5,
+            "model": "BMW i3",
+            "driver_smokes": true,
+            "supports_children": true,
+            "supports_disabled": false,
+            "supports_luggage": true,
+            "supports_animals": false
+        },
+        {
+            "id": 3,
+            "category": "eco",
+            "price_per_kilometer": 4.2,
+            "model": "BMW i7",
+            "driver_smokes": true,
+            "supports_children": true,
+            "supports_disabled": false,
+            "supports_luggage": true,
+            "supports_animals": false
+        }
+    ]))
 %}

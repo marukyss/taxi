@@ -13,8 +13,8 @@ Content-Type: application/json
     client.assert(Number.isInteger(response.body["id"]))
     client.assert(response.body["start_address"] == "Soborna 1")
     client.assert(response.body["end_address"] == "Soborna 10")
-    client.assert(response.body["distance_kilometers"] == 0.831)
-    client.assert(!Number.isNaN(parseFloat(response.body["mean_time_minutes"])))
+    client.assert(response.body["distance_kilometers"] == 0.301)
+    client.assert(response.body["mean_time_minutes"] == 0.3612)
 %}
 
 ### Refresh the route (and ensure that the route distance does not fluctuate)
@@ -29,8 +29,8 @@ Content-Type: application/json
     client.assert(Number.isInteger(response.body["id"]))
     client.assert(response.body["start_address"] == "Soborna 1")
     client.assert(response.body["end_address"] == "Soborna 10")
-    client.assert(response.body["distance_kilometers"] == 0.831)
-    client.assert(!Number.isNaN(parseFloat(response.body["mean_time_minutes"])))
+    client.assert(response.body["distance_kilometers"] == 0.301)
+    client.assert(response.body["mean_time_minutes"] == 0.3612)
 %}
 
 

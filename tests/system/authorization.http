@@ -5,7 +5,7 @@ Authorization: r86gmvwr0qoyjvl4spw9xtxo5civ629k
 > {%
     client.assert(response.status == 200)
     client.assert(JSON.stringify(response.body) == JSON.stringify({
-        id: 999,
+        id: 1,
         username: "u7i",
         token: "r86gmvwr0qoyjvl4spw9xtxo5civ629k",
         balance: 1000.0,
