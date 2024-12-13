@@ -1,7 +1,7 @@
 from typing import List, Type, Any
 
 from sqlalchemy import select, update, delete, insert, Executable, literal_column, Result, Row
-from sqlalchemy.exc import DataError, ProgrammingError
+from sqlalchemy.exc import DataError, ProgrammingError, DatabaseError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from utils.model import to_dict
@@ -100,5 +100,5 @@ class SqlRepository[Model]:
             return await self.__session.execute(stmt)
         except DataError as e:
             raise ValueError(str(e))
-        except ProgrammingError as e:
+        except DatabaseError as e:
             raise IOError(str(e))

@@ -21,14 +21,14 @@ class UnitOfWork:
     async def __aenter__(self) -> Self:
         return self
 
-    async def __aexit__(self, exc_type, exc, tb):
+    async def __aexit__(self, exc_type, exc, tb) -> None:
         await self.rollback()
         await self.__session.close()
 
-    async def commit(self):
+    async def commit(self) -> None:
         await self.__session.commit()
 
-    async def rollback(self):
+    async def rollback(self) -> None:
         await self.__session.rollback()
 
 

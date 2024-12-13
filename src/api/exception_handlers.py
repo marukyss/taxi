@@ -30,7 +30,7 @@ def handle_service_error(_: Request, exc: ServiceError) -> JSONResponse:
     )
 
 
-def handle_http_exception(_: Request, exc: HTTPException):
+def handle_http_exception(_: Request, exc: HTTPException) -> JSONResponse:
     # Compare http statuses to their text representations
     types = {
         status.HTTP_401_UNAUTHORIZED: "unauthorized",
@@ -50,7 +50,7 @@ def handle_http_exception(_: Request, exc: HTTPException):
     )
 
 
-def handle_validation_error(_: Request, exc: RequestValidationError):
+def handle_validation_error(_: Request, exc: RequestValidationError) -> JSONResponse:
     # Rebuild an exception body in more fancy manner
     entries = []
 

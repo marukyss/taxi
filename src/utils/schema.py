@@ -7,5 +7,5 @@ from utils.model import to_dict
 
 
 def from_sql_model(source: BaseSqlModel, target: Type[BaseModel]) -> BaseModel:
-    # Convert the sql model to the Pydantic schema
+    # Converts the sql model to the Pydantic schema
     return target(**to_dict(source))
