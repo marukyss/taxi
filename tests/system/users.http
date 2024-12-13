@@ -70,7 +70,7 @@ Content-Type: application/json
     client.assert(response.status == 400)
     client.assert(JSON.stringify(response.body) == JSON.stringify({
         type: "user_credentials_invalid",
-        message: "The username 'u7i' or the password 'invalid' are invalid",
+        message: "The <User username=u7i password=invalid> does not exist",
     }))
  %}
 

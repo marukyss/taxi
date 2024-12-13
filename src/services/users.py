@@ -34,20 +34,6 @@ class UsersService:
         return from_sql_model(model, UserSchema)
 
     @staticmethod
-    async def read(uow: UnitOfWorkFactory, id: int) -> UserSchema:
-        """Returns the user with the given id.
-        Throws UserNotFoundError if the user does not exist.
-        """
-
-        async with uow() as transaction:
-            resolved = await transaction.users.find(id=id)
-
-            if len(resolved) == 0:
-                raise UserNotFoundError(f"The <User id={id}> cannot be found")
-
-        return from_sql_model(resolved[0], UserSchema)
-
-    @staticmethod
     async def login(uow: UnitOfWorkFactory, credentials: UserSchemaLogin) -> UserSchema:
         """Authorizes the user by the given credentials.
         Throws UserInvalidCredentialsError if the username/password combination is invalid.
@@ -59,9 +45,23 @@ class UsersService:
             resolved = await transaction.users.find(username=credentials.username, password_hash=password_hash)
 
         if len(resolved) == 0:
-            raise UserCredentialsInvalidError(f"The username '{credentials.username}' or the password '{credentials.password}' are invalid")
+            raise UserCredentialsInvalidError(f"The <User username={credentials.username} password={credentials.password}> does not exist")
 
-        return resolved[0]
+        return from_sql_model(resolved[0], UserSchema)
+
+    @staticmethod
+    async def read(uow: UnitOfWorkFactory, id: int) -> UserSchema:
+        """Returns the user with the given id.
+        Throws UserNotFoundError if the user does not exist.
+        """
+
+        async with uow() as transaction:
+            resolved = await transaction.users.find(id=id)
+
+            if len(resolved) == 0:
+                raise UserNotFoundError(f"The <User id={id}> does not exist")
+
+        return from_sql_model(resolved[0], UserSchema)
 
     @staticmethod
     async def find_by_token(uow: UnitOfWorkFactory, token: str) -> UserSchema | None:
