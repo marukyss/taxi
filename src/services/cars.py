@@ -30,6 +30,6 @@ class CarsService:
         async with uow() as transaction:
             models = await transaction.cars.find(id=id)
             if len(models) == 0:
-                raise CarNotFoundError(f"The car[{id}] was not found")
+                raise CarNotFoundError(f"The <Car id={id}> was not found")
 
         return from_sql_model(models[0], CarSchema)

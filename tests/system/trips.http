@@ -2,44 +2,141 @@
 POST http://localhost:8000/trips
 Accept: application/json
 Content-Type: application/json
-Authorization:
+Authorization: r86gmvwr0qoyjvl4spw9xtxo5civ629k
 
 {
   "route_id": 1,
   "car_id": 1
 }
 
+> {%
+    const required = {
+        "id": 1,
+        "car_id": 1,
+        "user_id": 1,
+        "route_id": 1,
+        "finished_at": null
+    };
+
+    const tmp = Object.assign({}, response.body);
+    delete tmp["started_at"]
+
+    let result = true
+    result &= JSON.stringify(required) == JSON.stringify(tmp);
+    result &= (new Date() - Date.parse(response.body["started_at"])) < 4000
+
+    client.assert(response.status == 200)
+    client.assert(result)
+
+    client.global.set("started_at", response.body["started_at"])
+ %}
+
 ### Finish an existing trip
 POST http://localhost:8000/trips/1/finish
 Accept: application/json
 Content-Type: application/json
+Authorization: r86gmvwr0qoyjvl4spw9xtxo5civ629k
 
 {}
 
-### Finish an existing trip
+> {%
+    const required = {
+        "id": 1,
+        "car_id": 1,
+        "user_id": 1,
+        "route_id": 1,
+        "started_at": client.global.get("started_at")
+    };
+
+    const tmp = Object.assign({}, response.body);
+    delete tmp["finished_at"]
+
+    let result = true
+    result &= JSON.stringify(required) == JSON.stringify(tmp);
+    result &= (new Date() - Date.parse(response.body["finished_at"])) < 4000
+
+    client.assert(response.status == 200)
+    client.assert(result)
+%}
+
+### Try to close already closed trip
 POST http://localhost:8000/trips/1/finish
 Accept: application/json
 Content-Type: application/json
+Authorization: r86gmvwr0qoyjvl4spw9xtxo5civ629k
 
 {}
+
+> {%
+    client.assert(response.status == 400)
+    client.assert(JSON.stringify(response.body) == JSON.stringify({
+        "type": "trip_already_finished",
+        "message": "The <Trip id=1> has already been finished"
+    }))
+%}
 
 ### Finish unexisting trip
 POST http://localhost:8000/trips/-1/finish
 Accept: application/json
 Content-Type: application/json
+Authorization: r86gmvwr0qoyjvl4spw9xtxo5civ629k
 
-{
-  "route_id": 1,
-  "car_id": 1
-}
+{}
+
+> {%
+    client.assert(response.status == 404)
+    client.assert(JSON.stringify(response.body) == JSON.stringify({
+        "type": "trip_not_found",
+        "message": "The <Trip id=-1> was not found"
+    }))
+%}
+
+### Finish an existing trip without aunthorization
+POST http://localhost:8000/trips/1/finish
+Accept: application/json
+Content-Type: application/json
+Authorization:
+
+{}
+
+> {%
+    client.assert(response.status == 401)
+    client.assert(JSON.stringify(response.body) == JSON.stringify({
+        "type": "unauthorized",
+        "message": "The token '' is not owned by any user"
+    }))
+%}
 
 ### Read an existing trip
 GET http://localhost:8000/trips/1
 Accept: application/json
 Content-Type: application/json
+Authorization: r86gmvwr0qoyjvl4spw9xtxo5civ629k
 
 ### Read unexisting trip
 GET http://localhost:8000/trips/-1
 Accept: application/json
 Content-Type: application/json
+Authorization: r86gmvwr0qoyjvl4spw9xtxo5civ629k
 
+> {%
+    client.assert(response.status == 404)
+    client.assert(JSON.stringify(response.body) == JSON.stringify({
+        "type": "trip_not_found",
+        "message": "The <Trip id=-1> was not found"
+    }))
+%}
+
+### Read an existing trip without authorization
+GET http://localhost:8000/trips/-1
+Accept: application/json
+Content-Type: application/json
+Authorization:
+
+> {%
+    client.assert(response.status == 401)
+    client.assert(JSON.stringify(response.body) == JSON.stringify({
+        "type": "unauthorized",
+        "message": "The token '' is not owned by any user"
+    }))
+%}
