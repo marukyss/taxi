@@ -48,11 +48,11 @@ Content-Type: application/json
 > {%
     client.assert(response.status == 200)
     client.assert(JSON.stringify(response.body) == JSON.stringify({
-        id: 0,
+        id: 999,
         username: "u7i",
         token: "r86gmvwr0qoyjvl4spw9xtxo5civ629k",
         balance: 1000.0,
-        committed_trips: 0
+        committed_trips: 1
     }))
  %}
 
@@ -81,10 +81,10 @@ Authorization: r86gmvwr0qoyjvl4spw9xtxo5civ629k
 > {%
     client.assert(response.status == 200)
     client.assert(JSON.stringify(response.body) == JSON.stringify({
-        id: 0,
+        id: 999,
         username: "u7i",
         token: "r86gmvwr0qoyjvl4spw9xtxo5civ629k",
         balance: 1000.0,
-        committed_trips: 0
+        committed_trips: 1
     }))
 %}

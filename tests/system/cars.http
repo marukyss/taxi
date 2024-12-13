@@ -1,0 +1,18 @@
+### Find a car using the set of filters
+POST http://localhost:8000/cars/find
+Accept: application/json
+Content-Type: application/json
+
+{
+  "start_address": "Soborna 1",
+  "end_address": "Soborna 10"
+}
+
+> {%
+    client.assert(response.status == 200)
+    client.assert(Number.isInteger(response.body["id"]))
+    client.assert(response.body["start_address"] == "Soborna 1")
+    client.assert(response.body["end_address"] == "Soborna 10")
+    client.assert(response.body["distance_kilometers"] == 0.885)
+    client.assert(!Number.isNaN(parseFloat(response.body["mean_time_minutes"])))
+%}
