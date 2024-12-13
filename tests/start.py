@@ -6,8 +6,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from db.provider import SqlDbProvider
 from main import app
 from models.car import Car, CarCategory
+from models.route import Route
 from models.user import User
 from repositories.cars import CarsRepository
+from repositories.routes import RoutesRepository
 from repositories.users import UsersRepository
 
 
@@ -80,6 +82,17 @@ async def reset_db():
         supports_disabled=False,
         supports_luggage=True,
         supports_animals=False
+    ))
+
+    # Create the dummy route
+    routes = RoutesRepository(session)
+
+    await routes.create(Route(
+        id=1,
+        start_address="abc",
+        end_address="xyz",
+        distance_kilometers=10.123,
+        mean_time_minutes=15.4
     ))
 
     await session.commit()

@@ -13,6 +13,12 @@ async def create(request: RouteSchemaCreate, uow: UnitOfWorkDependency) -> Route
     return await RoutesService.create(uow, request)
 
 
+@router.get("/{id}")
+async def read(uow: UnitOfWorkDependency, id: int) -> RouteSchema:
+    """Reads the existing route, fails if the route does not exist"""
+    return await RoutesService.read(uow, id)
+
+
 @router.post("/{id}/refresh")
 async def refresh(uow: UnitOfWorkDependency, id: int) -> RouteSchema:
     """Recalculates the existing route, fails if the route does not exist"""
