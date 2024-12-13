@@ -15,7 +15,9 @@ def handle_service_error(_: Request, exc: ServiceError) -> JSONResponse:
         'user_credentials_invalid': status.HTTP_400_BAD_REQUEST,
         'route_not_found': status.HTTP_404_NOT_FOUND,
         'car_not_found': status.HTTP_404_NOT_FOUND,
-        'trip_not_found': status.HTTP_404_NOT_FOUND
+        'trip_not_found': status.HTTP_404_NOT_FOUND,
+        'trip_access_denied': status.HTTP_401_UNAUTHORIZED,
+        'trip_already_finished': status.HTTP_400_BAD_REQUEST
     }
 
     code = statuses.get(exc.type, status.HTTP_500_INTERNAL_SERVER_ERROR)

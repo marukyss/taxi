@@ -40,3 +40,11 @@ class CarNotFoundError(ServiceError):
 
 class TripNotFoundError(ServiceError):
     type: str = "trip_not_found"
+
+
+class TripAccessDeniedError(ServiceError):
+    type: str = "trip_access_denied"
+
+
+class TripAlreadyFinishedError(ServiceError):
+    type: str = "trip_already_finished"
