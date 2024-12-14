@@ -57,10 +57,17 @@ def handle_validation_error(_: Request, exc: RequestValidationError) -> JSONResp
     entries = []
 
     for error in exc.args[0]:
+        # Ensure that input will be always serializable
+        data = error["input"]
+
+        if isinstance(data, bytes):
+            data = data.decode("utf-8")
+
+        # Insert the new error
         entries.append({
             "type": error["msg"],
             "field": '/'.join(error["loc"]),
-            "input": error["input"]
+            "input": data
         })
 
     # Send the response with the newly created body

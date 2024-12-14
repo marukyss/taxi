@@ -126,7 +126,7 @@ async def reset_db():
 
 @asynccontextmanager
 async def custom_lifespan(_: FastAPI):
-    SqlDbProvider.init("mysql+aiomysql://taxi:SuperTaxi123!@3.77.96.62:3306/taxi")
+    SqlDbProvider.init("mysql+aiomysql://taxi:SuperTaxi123!@3.77.96.62:3306/taxi-test")
     await reset_db()
     yield 
     
