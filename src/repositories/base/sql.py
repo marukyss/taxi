@@ -41,7 +41,7 @@ class SqlRepository[Model]:
 
     async def update(self, model: Model) -> bool:
         """Updates the existing model in the table.
-        Returns false if the model with the same id doesn't exist in the table.
+        Returns false if the model with the same id does not exist in the table.
         """
 
         cls = self.__model__
@@ -83,7 +83,7 @@ class SqlRepository[Model]:
 
     async def find(self, **kwargs) -> List[Model]:
         """Finds the models from the table.
-        Doesn't support paging.
+        Does not support paging.
         """
 
         # Build & invoke the query

@@ -7,9 +7,11 @@ from db.provider import SqlDbProvider
 from main import app
 from models.car import Car, CarCategory
 from models.route import Route
+from models.trip import Trip
 from models.user import User
 from repositories.cars import CarsRepository
 from repositories.routes import RoutesRepository
+from repositories.trips import TripsRepository
 from repositories.users import UsersRepository
 
 
@@ -93,6 +95,27 @@ async def reset_db():
         end_address="xyz",
         distance_kilometers=10.123,
         mean_time_minutes=15.4
+    ))
+
+    # Create the dummy trips
+    trips = TripsRepository(session)
+
+    await trips.create(Trip(
+        id=1,
+        car_id=1,
+        user_id=1,
+        route_id=1,
+        started_at="2024-12-14T00:00:00",
+        finished_at="2024-12-14T00:10:00"
+    ))
+
+    await trips.create(Trip(
+        id=2,
+        car_id=2,
+        user_id=1,
+        route_id=1,
+        started_at="2024-12-14T00:02:00",
+        finished_at="2024-12-14T00:08:00"
     ))
 
     await session.commit()

@@ -12,6 +12,8 @@ from utils.uow import UnitOfWorkFactory
 
 
 class TripsService:
+    """The business logic for the trips management."""
+
     @staticmethod
     async def create(uow: UnitOfWorkFactory, user_id: int, trip: TripSchemaCreate) -> TripSchema:
         async with uow() as transaction:
@@ -62,13 +64,26 @@ class TripsService:
 
     @staticmethod
     async def find(uow: UnitOfWorkFactory, user_id: int, filters: TripSchemaFind) -> List[TripSchema]:
-        async with uow() as transaction:
-            models = await transaction.trips.find(**filters.model_dump(), user_id=user_id)
+        """Filters the trips by a set of criteria.
+        Limits the search scope to tips owned by a single user.
+        """
 
-        return [from_sql_model(model, TripSchema) for model in models]
+        async with uow() as transaction:
+            models = await transaction.trips.find(user_id=user_id)
+
+        filtered_models = filter(
+            lambda trip: (trip.finished_at is not None) if filters.finished else (trip.finished_at is None),
+            models
+        )
+
+        return [from_sql_model(model, TripSchema) for model in filtered_models]
 
     @staticmethod
     async def read(uow: UnitOfWorkFactory, user_id: int, id: int) -> TripSchema:
+        """Reads a single trip by its id.
+        Fails if the trip does not exist or the user does not own it.
+        """
+
         async with uow() as transaction:
             models = await transaction.trips.find(id=id)
 

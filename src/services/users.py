@@ -14,7 +14,7 @@ class UsersService:
     @staticmethod
     async def create(uow: UnitOfWorkFactory, user: UserSchemaCreate) -> UserSchema:
         """Creates a new user.
-        Requires unique username. Doesn't validate the password strength.
+        Requires unique username. Does not validate the password strength.
         """
 
         async with uow() as transaction:

@@ -11,7 +11,7 @@ Authorization: r86gmvwr0qoyjvl4spw9xtxo5civ629k
 
 > {%
     const required = {
-        "id": 1,
+        "id": 3,
         "car_id": 1,
         "user_id": 1,
         "route_id": 1,
@@ -31,8 +31,40 @@ Authorization: r86gmvwr0qoyjvl4spw9xtxo5civ629k
     client.global.set("started_at", response.body["started_at"])
  %}
 
+### Search for the finished trips
+POST http://localhost:8000/trips/find
+Accept: application/json
+Content-Type: application/json
+Authorization: r86gmvwr0qoyjvl4spw9xtxo5civ629k
+
+{
+  "finished": true
+}
+
+> {%
+    client.assert(response.status == 200)
+    client.assert(JSON.stringify(response.body) == JSON.stringify([
+        {
+            "id": 1,
+            "car_id": 1,
+            "user_id": 1,
+            "route_id": 1,
+            "started_at": "2024-12-14T00:00:00",
+            "finished_at": "2024-12-14T00:10:00"
+        },
+        {
+            "id": 2,
+            "car_id": 2,
+            "user_id": 1,
+            "route_id": 1,
+            "started_at": "2024-12-14T00:02:00",
+            "finished_at": "2024-12-14T00:08:00"
+        }
+    ]))
+%}
+
 ### Finish an existing trip
-POST http://localhost:8000/trips/1/finish
+POST http://localhost:8000/trips/3/finish
 Accept: application/json
 Content-Type: application/json
 Authorization: r86gmvwr0qoyjvl4spw9xtxo5civ629k
@@ -41,7 +73,7 @@ Authorization: r86gmvwr0qoyjvl4spw9xtxo5civ629k
 
 > {%
     const required = {
-        "id": 1,
+        "id": 3,
         "car_id": 1,
         "user_id": 1,
         "route_id": 1,
@@ -60,7 +92,7 @@ Authorization: r86gmvwr0qoyjvl4spw9xtxo5civ629k
 %}
 
 ### Try to close already closed trip
-POST http://localhost:8000/trips/1/finish
+POST http://localhost:8000/trips/3/finish
 Accept: application/json
 Content-Type: application/json
 Authorization: r86gmvwr0qoyjvl4spw9xtxo5civ629k
@@ -71,7 +103,7 @@ Authorization: r86gmvwr0qoyjvl4spw9xtxo5civ629k
     client.assert(response.status == 400)
     client.assert(JSON.stringify(response.body) == JSON.stringify({
         "type": "trip_already_finished",
-        "message": "The <Trip id=1> has already been finished"
+        "message": "The <Trip id=3> has already been finished"
     }))
 %}
 

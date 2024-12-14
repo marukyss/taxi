@@ -15,7 +15,7 @@ async def create(uow: UnitOfWorkDependency, user: CurrentUserDependency, trip: T
     return await TripsService.create(uow, user.id, trip)
 
 
-@router.get("/find")
+@router.post("/find")
 async def find(uow: UnitOfWorkDependency, user: CurrentUserDependency, filters: TripSchemaFind) -> List[TripSchema]:
     """Finish a trip by its ID, may be invoked only by the user who has created the trip"""
     return await TripsService.find(uow, user.id, filters)

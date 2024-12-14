@@ -19,4 +19,12 @@ class TripSchemaCreate(BaseModel):
 
 
 class TripSchemaFind(BaseModel):
-    user_id: int
+    """The trip lookup query representation.
+
+    Attributes
+    ----------
+    finished : bool
+        The state of the trip.
+    """
+
+    finished: bool
