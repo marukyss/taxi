@@ -30,12 +30,20 @@ class UserCredentialsInvalidError(ServiceError):
     type: str = "user_credentials_invalid"
 
 
+class UserBalanceTooLowError(ServiceError):
+    type: str = "user_balance_too_low"
+
+
 class RouteNotFoundError(ServiceError):
     type: str = "route_not_found"
 
 
 class CarNotFoundError(ServiceError):
     type: str = "car_not_found"
+
+
+class TripTooExpensiveError(ServiceError):
+    type: str = "trip_too_expensive"
 
 
 class TripNotFoundError(ServiceError):

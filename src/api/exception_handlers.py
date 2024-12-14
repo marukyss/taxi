@@ -13,8 +13,10 @@ def handle_service_error(_: Request, exc: ServiceError) -> JSONResponse:
         'user_already_exists': status.HTTP_400_BAD_REQUEST,
         'user_not_found': status.HTTP_404_NOT_FOUND,
         'user_credentials_invalid': status.HTTP_400_BAD_REQUEST,
+        'user_balance_too_low': status.HTTP_400_BAD_REQUEST,
         'route_not_found': status.HTTP_404_NOT_FOUND,
         'car_not_found': status.HTTP_404_NOT_FOUND,
+        'trip_too_expensive': status.HTTP_400_BAD_REQUEST,
         'trip_not_found': status.HTTP_404_NOT_FOUND,
         'trip_access_denied': status.HTTP_401_UNAUTHORIZED,
         'trip_already_finished': status.HTTP_400_BAD_REQUEST

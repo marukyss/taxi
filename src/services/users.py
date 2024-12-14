@@ -3,7 +3,8 @@ from hashlib import sha256
 
 from models.user import User
 from schemas.user import UserSchemaCreate, UserSchema, UserSchemaLogin
-from utils.exceptions import UserAlreadyExistsError, UserNotFoundError, UserCredentialsInvalidError
+from utils.exceptions import UserAlreadyExistsError, UserNotFoundError, UserCredentialsInvalidError, \
+    UserBalanceTooLowError
 from utils.schema import from_sql_model
 from utils.uow import UnitOfWorkFactory
 
@@ -46,6 +47,28 @@ class UsersService:
 
         if len(resolved) == 0:
             raise UserCredentialsInvalidError(f"The <User username={credentials.username} password={credentials.password}> does not exist")
+
+        return from_sql_model(resolved[0], UserSchema)
+
+    @staticmethod
+    async def charge_money(uow: UnitOfWorkFactory, id: int, value: float) -> UserSchema:
+        """Charges money from the user's account.
+        Fails if the user does not have enough money, or it simply does not exist
+        """
+
+        async with uow() as transaction:
+            resolved = await transaction.users.find(id=id)
+
+            if len(resolved) == 0:
+                raise UserNotFoundError(f"The <User id={id}> does not exist")
+
+            if resolved[0].balance < value:
+                raise UserBalanceTooLowError(f"The <User id={id}> balance is too low to charge {value} conventional units")
+
+            resolved[0].balance -= value
+
+            await transaction.users.update(resolved[0])
+            await transaction.commit()
 
         return from_sql_model(resolved[0], UserSchema)
 

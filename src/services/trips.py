@@ -6,7 +6,7 @@ from schemas.trip import TripSchemaFind, TripSchema, TripSchemaCreate
 from services.cars import CarsService
 from services.routes import RoutesService
 from services.users import UsersService
-from utils.exceptions import TripNotFoundError, TripAccessDeniedError, TripAlreadyFinishedError
+from utils.exceptions import TripNotFoundError, TripAccessDeniedError, TripAlreadyFinishedError, TripTooExpensiveError
 from utils.schema import from_sql_model
 from utils.uow import UnitOfWorkFactory
 
@@ -18,9 +18,15 @@ class TripsService:
     async def create(uow: UnitOfWorkFactory, user_id: int, trip: TripSchemaCreate) -> TripSchema:
         async with uow() as transaction:
             # Require dependencies (raises exceptions)
-            await CarsService.read(uow, trip.car_id)
-            await RoutesService.read(uow, trip.route_id)
-            await UsersService.read(uow, user_id)
+            car = await CarsService.read(uow, trip.car_id)
+            route = await RoutesService.read(uow, trip.route_id)
+            user = await UsersService.read(uow, user_id)
+
+            # Verify that user has enough money
+            price = car.price_per_kilometer*route.distance_kilometers
+
+            if user.balance < price:
+                raise TripTooExpensiveError(f"The <User id={user_id} balance={user.balance}> cannot afford <Trip price={price}>")
 
             # Insert the model
             model = await transaction.trips.create(Trip(
@@ -31,6 +37,10 @@ class TripsService:
             ))
 
             await transaction.commit()
+
+        # Remove the money from the user's account (will never raise an exception)
+        # TODO: Unsafe
+        await UsersService.charge_money(uow, user_id, price)
 
         return from_sql_model(model, TripSchema)
 

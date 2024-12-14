@@ -35,6 +35,24 @@ async def reset_db():
         committed_trips=1
     ))
 
+    await users.create(User(
+        id=2,
+        username="u7i2",
+        password_hash="65e84be33532fb784c48129675f9eff3a682b27168c0ea744b2cf58ee02337c5",
+        token="token",
+        balance=1000,
+        committed_trips=0
+    ))
+
+    await users.create(User(
+        id=3,
+        username="u7i3",
+        password_hash="65e84be33532fb784c48129675f9eff3a682b27168c0ea744b2cf58ee02337c5",
+        token="token2",
+        balance=0,
+        committed_trips=0
+    ))
+
     # Create dummy cars
     cars = CarsRepository(session)
 
@@ -103,7 +121,7 @@ async def reset_db():
     await trips.create(Trip(
         id=1,
         car_id=1,
-        user_id=1,
+        user_id=2,
         route_id=1,
         started_at="2024-12-14T00:00:00",
         finished_at="2024-12-14T00:10:00"
@@ -112,7 +130,7 @@ async def reset_db():
     await trips.create(Trip(
         id=2,
         car_id=2,
-        user_id=1,
+        user_id=2,
         route_id=1,
         started_at="2024-12-14T00:02:00",
         finished_at="2024-12-14T00:08:00"
